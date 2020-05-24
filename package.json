@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/aabedraba/node-cli#readme",
   "dependencies": {
-    "node-fetch": "^2.6.0"
+    "isomorphic-unfetch": "^3.0.0"
   }
 }
