@@ -1,32 +1,26 @@
-const fetch = require('isomorphic-unfetch')
-const links = [
-    'https://api.magicthegathering.io/v1/cards?page=1',
-    'https://api.magicthegathering.io/v1/cards?page=2',
-    'https://api.magicthegathering.io/v1/cards?page=3',
-    ,'https://api.magicthegathering.io/v1/cards?page=4'
-]
+// const fs = require('fs')
+// fs.readFile('response.js', (err, data) => {
+//     if (err)
+//         throw console.err(err)
 
-async function getData(links){
-    const data = await processByChunks(links, 2)
-    console.log(data)
-}
+//     const info = data
+//     console.log(info)
+// })
 
-async function processByChunks(items, chunkSize = 50){
-    const chunks = splitToChunks(items, chunkSize)
-    return await processInSeries(chunks)
-}
+// const fs = require('fs')
+// const { getData } = require('./lib/data')
+// 
+// getData('https://api.magicthegathering.io/v1/cards').then(res => {
+//     fs.appendFile('./response.json', JSON.stringify(res), function (err) {
+//         if (err) throw err;
+//         console.log('Saved!');
+//     });
+// })
 
-function splitToChunks(items, chunkSize) {
-    const result = []
-    for (let i = 0; i < items.length; i += chunkSize) {
-        result.push(items.slice(i, i + chunkSize))
-    }
-    return result
-}
-
-function processInSeries(items) {
-    const promises = items.map(item => fetch(item).then(res => res.json()))
-    return Promise.all(promises).then(data => result.push(data))
-}
-
-getData(links)
+const fs = require('fs')
+let data
+fs.readFile('./response.json', 'utf-8', (err, res) => {
+    if (err) console.error('Error reading response file. ' + err)
+    data = JSON.parse(res)
+    console.log(data[0])
+})
