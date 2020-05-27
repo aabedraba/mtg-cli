@@ -18,9 +18,25 @@
 // })
 
 const fs = require('fs')
-let data
+const { groupBySet, groupBySetAndRarity } = require('./lib/filters')
+
 fs.readFile('./response.json', 'utf-8', (err, res) => {
     if (err) console.error('Error reading response file. ' + err)
-    data = JSON.parse(res)
-    console.log(data[0])
+    const data = JSON.parse(res)
+    console.log(data.length)
+    
+    const groupedBySet = groupBySet(data, card => card.set)
+    console.log(Object.keys(groupedBySet).length)
+    fs.writeFile('./groupedBySet.json', JSON.stringify(groupedBySet), (err) => {
+        if (err) console.error('Error writing grouped set. ' + err)
+        console.log('Grouped set added to file groupedBySet.json')
+    })
+
+    const groupedBySetAndRarity = groupBySetAndRarity(data, card => card.set, card => card.rarity)
+    console.log(Object.keys(groupedBySetAndRarity).length)
+    fs.writeFile('./setAndRarity.json', JSON.stringify(groupedBySetAndRarity), (err) => {
+        if (err) console.error('Error writing grouperd set and rarity. ', err)
+        console.log('Grouped set and rarity added to file groupedBySetAndRarity.json ')
+    })
 })
+
