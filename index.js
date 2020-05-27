@@ -1,20 +1,36 @@
-const fs = require('fs')
-const groupBy = require('./lib/group')
+#!/usr/bin/env node
 
-fs.readFile('./response.json', 'utf-8', (err, res) => {
-    if (err) console.error('Error reading response file. ' + err)
-    const data = JSON.parse(res)
-    console.log(data.length)
+const option = process.argv[2]
+const arguments = process.argv.slice(3, process.argv.length)
+const argsLength = process.argv.length
+
+const fileHandle = require('./lib/fileHandle')
+const getData = require('./lib/data')
+
+if (argsLength == 2) {
+    console.log('Need options to execute. Check the help docs with \'mtg-cli\ -h\'')
+    return
+}
+else if (option != '--filter' && option != '--group'){
+    console.log('Unrecognized options. Check the help docs with \'mtg-cli\ -h\'')
+    return
+}
     
-    // if (groupRarity) console.log("Grouping by set and rarity")
-    // else console.log("Grouping by set.")
+else if (arguments.length == 0) {
+    console.log('Option ' + option + ' needs at least one argument.')
+    return
+}
 
-    const groupOptions = ["set", "rarity", "name"] 
-    const filtered = groupBy(data, groupOptions)
-    const filePath = './newFiltered.json'
-    fs.writeFile(filePath, JSON.stringify(filtered), err => {
-        if (err) console.error('Error writing results into file. ', err)
-        console.log('Results in file ', filePath)
-    })
-}) 
-
+// TODO: handle exceptions
+if (!fileHandle.cacheExists) {
+    getData('https://api.magicthegathering.io/v1/cards')
+        .then((data) => {
+            fileHandle.saveData(JSON.stringify(data))
+        })
+        .then(() => {
+            fileHandle.executeOperation(option, arguments)
+        })
+} 
+else {
+    fileHandle.executeOperation(option, arguments)
+}
